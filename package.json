@@ -1,9 +1,13 @@
 {
   "name": "redis-cluster-batch",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "redis-cluster-batch is a library for redis cluster batch operations, support mget, mset, msetpx and pipeline on redis cluster mode",
   "license": "ISC",
-  "author": "",
+  "author": "wanqingying",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wanqingying/redis-cluster-batch"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [

@@ -1,3 +1,32 @@
+## redis cluster batch actions
+this is a small wrap base on node-redis
+
+usage
+
+```typescript
+
+const cluster = await RedisClusterBatch.init({
+  host: "redis-cluster",
+  port: 6379,
+  slotsRefreshInterval: 5000,
+});
+
+
+// use batch action
+await cluster.mSetPx(
+  {
+    key1: "value1",
+  },
+  7000
+);
+const result = await cluster.mGet(["key1"]);
+
+// use node-redis client
+await cluster.client.set("key1", "value1");
+await cluster.client.get("key1");
+
+```
+
 
 ## redis cluster mget/mset 
 auto manage cluster slots
