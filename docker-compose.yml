@@ -1,0 +1,156 @@
+# version: "3.8"
+
+services:
+  # ...existing services...
+
+  test:
+    image: node:22.14.0
+    container_name: test
+    volumes:
+      - .:/app
+    working_dir: /app
+    # ports:
+      # - '8500:8500'
+    command:
+      ['./node_modules/.bin/ts-node', './benchmark/index.ts']
+    networks:
+      - app-network
+    depends_on:
+      - cluster
+  
+  redis-1:
+    container_name: redis-cluster
+    hostname: redis-cluster
+    image: redis:7.4.2
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports:
+      - "6378:6379"
+      - "6622:22"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis-2:
+    image: redis:7.4.2
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports:
+      - "6390:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis-3:
+    image: redis:7.4.2
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports:
+      - "6391:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis-4:
+    image: redis:7.4.2
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports:
+      - "6392:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis-5:
+    image: redis:7.4.2
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports:
+      - "6393:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  
+  redis-6:
+    container_name: redis-6
+    image: redis:7.4.2
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports:
+      - "6394:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  
+  redis-7:
+    container_name: redis-7
+    image: redis:7.4.2
+    command: redis-server --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --appendonly yes
+    ports:
+      - "6395:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  cluster:
+    image: redis:7.4.2
+    container_name: cluster-init
+    command: >
+      bash -c "
+        sleep 15 &&
+        echo yes | redis-cli --cluster create redis-1:6379 redis-2:6379 redis-3:6379 redis-4:6379  redis-5:6379 --cluster-replicas 0
+      "
+    depends_on:
+      redis-1:
+        condition: service_healthy
+      redis-2:
+        condition: service_healthy
+      redis-3:
+        condition: service_healthy
+      redis-4:
+        condition: service_healthy
+      redis-5:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  cluster-extend:
+    image: redis:7.4.2
+    command: >
+      bash -c "
+        sleep 20 &&
+        redis-cli --cluster add-node redis-6:6379 redis-1:6379 &&
+        redis-cli --cluster add-node redis-7:6379 redis-1:6379 &&
+        sleep 5 &&
+        redis-cli --cluster rebalance redis-1:6379
+      "
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    name: app-network
+    driver: bridge
+

@@ -1,0 +1,30 @@
+{
+  "name": "redis-cluster-batch",
+  "version": "1.0.4",
+  "description": "redis-cluster-batch is a library for redis cluster batch operations, support mget, mset, msetpx and pipeline on redis cluster mode",
+  "license": "ISC",
+  "author": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "lib",
+    "benchmark",
+    "readme.md"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/benchmark": "^2.1.5",
+    "@types/node": "^22.15.21",
+    "benchmark": "^2.1.4",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2"
+  },
+  "peerDependencies": {
+    "cluster-key-slot": ">= 1.0.0",
+    "redis": ">=5.0.0"
+  }
+}
